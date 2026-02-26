@@ -138,7 +138,7 @@ export default function DashboardPage() {
   const machines = ['MESIN_01', 'MESIN_02', 'MESIN_03'];
 
   // Hitung daya dalam kW (konversi dari Watt)
-  const powerKW = latestData?.powerTotal ? (latestData.powerTotal / 1000).toFixed(2) : '0';
+//   const powerKW = latestData?.powerTotal ? (latestData.powerTotal / 1000).toFixed(2) : '0';
 
   return (
     <div className="p-6 space-y-6">
@@ -293,24 +293,26 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Daya Card */}
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <GaugeIcon className="w-4 h-4 text-purple-600" />
-              Daya Total
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-purple-700">
-              {powerKW} <span className="text-lg">kW</span>
-            </div>
-            <div className="flex justify-between mt-2 text-xs">
-              <span className="text-gray-500">Frekuensi:</span>
-              <span className="font-semibold">{latestData?.frequency?.toFixed(1) || '0'} Hz</span>
-            </div>
-          </CardContent>
-        </Card>
+       {/* Daya Card - langsung pakai latestData.powerTotal */}
+      <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <GaugeIcon className="w-4 h-4 text-purple-600" />
+            Daya Total
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-purple-700">
+            {latestData?.powerTotal 
+              ? (latestData.powerTotal / 1000).toFixed(2) 
+              : '0'} <span className="text-lg">kW</span>
+          </div>
+          <div className="flex justify-between mt-2 text-xs">
+            <span className="text-gray-500">Frekuensi:</span>
+            <span className="font-semibold">{latestData?.frequency?.toFixed(1) || '0'} Hz</span>
+          </div>
+        </CardContent>
+      </Card>
 
         {/* Energi Card */}
         <Card className="bg-gradient-to-br from-amber-50 to-amber-100">
@@ -415,42 +417,39 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Grafik Daya */}
-      <Card>
+      {/* Grafik Daya - LANGSUNG dari database (dalam kW) */}
+        <Card>
         <CardHeader>
-          <CardTitle>Daya Total (kW)</CardTitle>
+            <CardTitle>Daya Total (kW)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-60">
+            <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={powerData.map(d => ({
-                ...d,
-                powerKW: d.powerTotal ? d.powerTotal / 1000 : 0
-              }))}>
+                <LineChart data={powerData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
-                  dataKey="timestamp" 
-                  tickFormatter={formatTime}
+                    dataKey="timestamp" 
+                    tickFormatter={formatTime}
                 />
                 <YAxis />
                 <Tooltip 
-                  labelFormatter={(label) => new Date(label).toLocaleString('id-ID')}
-                  formatter={(value: any) => [`${value.toFixed(2)} kW`, 'Daya']}
+                    labelFormatter={(label) => new Date(label).toLocaleString('id-ID')}
+                    formatter={(value: any) => [`${value.toFixed(2)} kW`, 'Daya']}
                 />
                 <Legend />
                 <Line 
-                  type="monotone" 
-                  dataKey="powerKW" 
-                  stroke="#ffc658" 
-                  name="Daya Total"
-                  dot={false}
+                    type="monotone" 
+                    dataKey="powerTotal"  // ← LANGSUNG pakai powerTotal (dalam kW)
+                    stroke="#ffc658" 
+                    name="Daya Total"
+                    dot={false}
                 />
-              </LineChart>
+                </LineChart>
             </ResponsiveContainer>
-          </div>
+            </div>
         </CardContent>
-      </Card>
-
+        </Card>
+        
       {/* Footer */}
       <div className="flex justify-center gap-4 pt-4 border-t">
         <Link href="../dashboard/access-control">

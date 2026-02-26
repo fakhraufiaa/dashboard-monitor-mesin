@@ -57,26 +57,39 @@ export async function getUserList(spreadsheetId: string) {
 }
 
 // Ambil data power meter dari sheet Log_Monitoring_Energi_PM2230
+// lib/googleSheets.ts - fungsi getPowerData
+
 export async function getPowerData(spreadsheetId: string, limit: number = 100) {
   const data = await getSheetData(spreadsheetId, 'Log_Monitoring_Energi_PM2230!A:G');
   if (!data || data.length < 2) return [];
   
-  // Asumsi kolom: A(Timestamp), B(vAvg), C(iAvg), D(pTot), E(hz), F(kwh), G(status)
+  // Skip header row (asumsi baris pertama adalah header)
   const rows = data.slice(1);
   return rows.slice(-limit).map((row, index) => {
     // Parse timestamp dari format "dd/MM/yyyy HH:mm:ss"
     const timestamp = row[0] || '';
-    const [date, time] = timestamp.split(' ');
-    const [day, month, year] = date?.split('/') || [];
+    let parsedTimestamp = new Date().toISOString();
+    
+    try {
+      if (timestamp && timestamp.includes('/')) {
+        const [date, time] = timestamp.split(' ');
+        const [day, month, year] = date.split('/');
+        if (day && month && year && time) {
+          parsedTimestamp = `${year}-${month}-${day}T${time}`;
+        }
+      }
+    } catch (e) {
+      console.warn('Error parsing timestamp:', timestamp);
+    }
     
     return {
-      timestamp: year && month && day ? `${year}-${month}-${day}T${time}` : new Date().toISOString(),
-      voltageAvg: parseFloat(row[1]) || 0,
-      currentAvg: parseFloat(row[2]) || 0,
-      powerTotal: parseFloat(row[3]) || 0,
-      frequency: parseFloat(row[4]) || 0,
-      energyKwh: parseFloat(row[5]) || 0,
-      status: row[6] || 'Unknown',
+      timestamp: parsedTimestamp,
+      voltageAvg: parseFloat(row[1]) || 0,  // V_Avg (V)
+      currentAvg: parseFloat(row[2]) || 0,  // I_Avg (A)
+      powerTotal: parseFloat(row[3]) || 0,  // P (kW) - LANGSUNG dalam kW
+      frequency: parseFloat(row[4]) || 0,   // Freq (Hz)
+      energyKwh: parseFloat(row[5]) || 0,   // Energy (kWh)
+      status: row[6] || 'Success',
       idMesin: 'MESIN_01' // Default, karena tidak dikirim dari ESP32
     };
   }).reverse();
