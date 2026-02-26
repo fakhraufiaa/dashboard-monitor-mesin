@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model PowerData {
+  id         String    @id @default(cuid())   
+  voltageAvg Float?
+  currentAvg Float?
+  frequency  Float?
+  energyKwh  Float?
+  timestamp  DateTime @default(now())
+  idMesin    String
+  powerTotal Float?
+  status     String?
+
+  @@index([idMesin])
+  @@index([timestamp])
+}
+
+model RFIDLog {
+  id         String     @id @default(cuid()) 
+  no         Int?
+  timestamp  DateTime
+  idMesin    String
+  waktuOn    String?
+  waktuOff   String?
+  uid        String
+  namaUser   String?
+  statusSesi String
+  durasi     String?
+  createdAt  DateTime  @default(now())
+  userId     String?
+  UserList   UserList? @relation(fields: [userId], references: [id])
+
+  @@index([idMesin])
+  @@index([timestamp])
+  @@index([uid])
+}
+
+model UserList {
+  id        String    @id @default(cuid()) 
+  uid       String    @unique
+  nama      String
+  status    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  RFIDLog   RFIDLog[]
+}
+
+model users {
+  id        Int      @id @default(autoincrement())
+  uniqCode  Int      @unique
+  name      String
+  role      Role
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+enum Role {
+  ADMIN
+  USER
+}
