@@ -146,9 +146,9 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Power Monitoring Dashboard
+            Monitoring Dashboard
           </h1>
-          <p className="text-gray-500 mt-1">Real-time monitoring dari PM2230 (update setiap 30 detik)</p>
+          <p className="text-gray-500 mt-1">Real-time monitoring dari PM2230</p>
         </div>
         
         <div className="flex items-center gap-3 flex-wrap">
@@ -309,7 +309,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex justify-between mt-2 text-xs">
             <span className="text-gray-500">Frekuensi:</span>
-            <span className="font-semibold">{latestData?.frequency?.toFixed(1) || '0'} Hz</span>
+            <span className="font-semibold">{latestData?.frequency|| '0'} Hz</span>
           </div>
         </CardContent>
       </Card>
@@ -324,7 +324,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-amber-700">
-              {latestData?.energyKwh?.toFixed(1) || '0'} <span className="text-lg">kWh</span>
+              {latestData?.energyKwh || '0'} <span className="text-lg">kWh</span>
             </div>
             <p className="text-xs text-gray-500 mt-2">Accumulated Energy</p>
           </CardContent>
@@ -454,14 +454,10 @@ export default function DashboardPage() {
       <div className="flex justify-center gap-4 pt-4 border-t">
         <Link href="../dashboard/access-control">
           <Button variant="link" className="text-blue-600">
-            <Shield className="w-4 h-4 mr-2" />
+            <Shield className="w-4 h-4" />
             Lihat Detail Access Control
           </Button>
         </Link>
-        <Button variant="link" className="text-green-600" onClick={fetchPowerData}>
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh Data
-        </Button>
       </div>
     </div>
   );
