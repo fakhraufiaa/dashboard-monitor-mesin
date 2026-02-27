@@ -3,11 +3,12 @@ import { prisma } from "@/lib/prisma";
 // app/api/user-list/[uid]/route.ts
 export async function GET(
   request: Request,
-  { params }: { params: { uid: string } }
+  { params }: { params: Promise<{ uid: string }> }
 ) {
   try {
+    const { uid } = await params;
     const user = await prisma.userList.findUnique({
-      where: { uid: params.uid },
+      where: { uid },
       include: {
         RFIDLog: {
           orderBy: { timestamp: 'desc' },
