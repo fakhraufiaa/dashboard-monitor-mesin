@@ -95,7 +95,7 @@ export default function DashboardPage() {
   const fetchPowerData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/power-data/latest?idMesin=${selectedMachine}&limit=60`);
+      const res = await fetch(`../../api/power-data/latest?idMesin=${selectedMachine}&limit=60`);
       const data = await res.json();
       setPowerData(data);
       setLatestData(data[data.length - 1] || null);
@@ -449,7 +449,7 @@ export default function DashboardPage() {
             </div>
         </CardContent>
         </Card>
-        
+
       {/* Footer */}
       <div className="flex justify-center gap-4 pt-4 border-t">
         <Link href="../dashboard/access-control">

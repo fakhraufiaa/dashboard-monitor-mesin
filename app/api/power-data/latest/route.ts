@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       currentB: data.currentAvg,
       currentC: data.currentAvg,
       currentAvg: data.currentAvg,
-      powerActive: data.powerTotal ? data.powerTotal / 1000 : 0, // Convert Watt ke kW
+      powerActive: data.powerTotal, // Convert Watt ke kW
       powerReactive: 0, // Tidak ada data
       frequency: data.frequency,
       energyKwh: data.energyKwh,
